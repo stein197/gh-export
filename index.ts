@@ -33,6 +33,16 @@ const Schema = {
 (async function main(...args: string[]): Promise<void> {
 	const parameters = parseParameters(...args);
 	const options = {...DEFAULT_OPTIONS, ...parseOptions(...args)};
+	const cwd = process.cwd();
+	// TODO
+	switch (parameters.type) {
+		case Type.Gist: {
+			break;
+		}
+		case Type.Repo: {
+			break;
+		}
+	}
 })(...process.argv.slice(2));
 
 // TODO: WARN: Unknown option
