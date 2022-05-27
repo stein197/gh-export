@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/stein197/gh-export/issues"
   },
-  "homepage": "https://github.com/stein197/gh-export#readme"
+  "homepage": "https://github.com/stein197/gh-export#readme",
+  "devDependencies": {
+    "@types/node": "17.0.35",
+    "typescript": "4.7.2"
+  }
 }

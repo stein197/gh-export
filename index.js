@@ -5,52 +5,32 @@ const os = require("os");
 const path = require("path");
 const process = require("process");
 
-const OPTS = {
-	...{
-		reposDir: "Projects",
-		gistsDir: "Gists",
-		gistsPlain: false,
-		verbose: false,
-		noRepos: false,
-		noGists: false
-	},
-	...Object.fromEntries(
-		process.argv
-			.filter(arg => arg.startsWith("-"))
-			.map(arg => arg.replace(/^-+/, ""))
-			.map(arg => arg.split("="))
-			.map(arg => arg[1] ? arg : [arg[0], true])
-	)
-};
-const DEFAULT_USER_AGENT = `Node.js/${process.version.slice(1)} (${os.platform()} ${os.release()}; ${process.arch})`;
-const API_HOST = "api.github.com";
-const API_USER_REPOS = "/user/repos";
-const API_GISTS = "/gists";
-const SCHEMA_REPOS = {
-	url: "ssh_url",
-	name: "name"
-};
-const SCHEMA_GISTS = {
-	name: "id",
-	files: "files"
-};
-
 (async function main(...args) {
-	const [user, auth] = args;
+	const [type, user, auth] = args;
+	validateArgs(type, user, auth);
+	const cwd = process.cwd();
+	switch (type) {
+		case Type.Gist: {
+			const gists = await fetchData(user, auth, API_GISTS, SCHEMA_GISTS);
+			exportData(gists, path.resolve(cwd, OPTS.gistsDir), exportGist);
+			break;
+		}
+		case Type.Repo: {
+			const repos = await fetchData(user, auth, API_USER_REPOS, SCHEMA_REPOS);
+			exportData(repos, path.resolve(cwd, OPTS.reposDir), exportRepo);
+			break;
+		}
+	}
+})(...process.argv.slice(2));
+
+function validateArgs(type, user, auth) {
+	if (!Object.values(Type).includes(type))
+		throw new Error(`Unknown type "${type}"`);
 	if (!user)
 		throw new Error("User name is not provided");
 	if (!auth)
 		throw new Error("Auth token is not provided");
-	const cwd = process.cwd();
-	if (!OPTS.noRepos) {
-		const repos = await fetchData(user, auth, API_USER_REPOS, SCHEMA_REPOS);
-		exportData(repos, path.resolve(cwd, OPTS.reposDir), exportRepo);
-	}
-	if (!OPTS.noGists) {
-		const gists = await fetchData(user, auth, API_GISTS, SCHEMA_GISTS);
-		exportData(gists, path.resolve(cwd, OPTS.gistsDir), exportGist);
-	}
-})(...process.argv.slice(2));
+}
 
 async function fetchData(user, auth, path, schema) {
 	let page = 1;
