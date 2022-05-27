@@ -31,9 +31,11 @@ const Schema = {
 };
 
 (async function main(...args: string[]): Promise<void> {
+	const parameters = parseParameters(...args);
 	const options = {...DEFAULT_OPTIONS, ...parseOptions(...args)};
 })(...process.argv.slice(2));
 
+// TODO: WARN: Unknown option
 function parseOptions(...args: string[]): Options {
 	return Object.fromEntries(
 		args
@@ -42,6 +44,28 @@ function parseOptions(...args: string[]): Options {
 			.map(arg => arg.split("="))
 			.map(arg => arg[1] ? arg : [arg[0], true])
 	);
+}
+
+function parseParameters(...args: string[]): Parameters {
+	const [type, user, auth] = args;
+	const lcType = Object.fromEntries(Object.entries(Type).map(entry => entry.map(item => item.toString().toLowerCase())));
+	if (!(type in lcType))
+		throw new Error(`Unknown type: ${type}`);
+	if (!user)
+		throw new Error("User name is not provided");
+	if (!auth)
+		throw new Error("Auth token is not provided");
+	return {
+		type: +lcType[type],
+		user,
+		auth
+	};
+}
+
+type Parameters = {
+	type: Type;
+	user: string;
+	auth: string;
 }
 
 type Options = {
