@@ -16,10 +16,7 @@ const DEFAULT_OPTIONS: Options = {
 	"verbose": false,
 };
 const DEFAULT_USER_AGENT = `Node.js/${process.version.slice(1)} (${os.platform()} ${os.release()}; ${process.arch})`;
-const API_HOST           = "api.github.com";
-const API_USER_REPOS     = "/user/repos";
-const API_GISTS          = "/gists";
-const Schema = {
+const SCHEMA = {
 	[Type.Gist]: {
 		name: "id",
 		files: "files"
@@ -28,6 +25,11 @@ const Schema = {
 		url: "ssh_url",
 		name: "name"
 	}
+};
+const API = {
+	HOST: "api.github.com",
+	[Type.Gist]: "/gists",
+	[Type.Repo]: "/user/repos"
 };
 
 (async function main(...args: string[]): Promise<void> {
