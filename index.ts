@@ -54,6 +54,7 @@ function parseOptions(...args: string[]): Options {
 			.filter(arg => arg.startsWith("-"))
 			.map(arg => arg.replace(/^-+/, ""))
 			.map(arg => arg.split("="))
+			.filter(arg => arg[0] in DEFAULT_OPTIONS || warn(`Unknown option: ${arg[0]}`))
 			.map(arg => arg[1] ? arg : [arg[0], true])
 	);
 }
@@ -72,6 +73,10 @@ function parseParameters(...args: string[]): Parameters {
 		user,
 		auth
 	};
+}
+
+function warn(msg: string): void {
+	console.warn(`[WARN]: ${msg}`);
 }
 
 type Parameters = {
