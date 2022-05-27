@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## [1.0.0](../../compare/0.3.0..1.0.0) - XXXX-XX-XX
+
 ## [0.3.0](../../compare/0.2.1..0.3.0) - 2022-04-10
 ### Added
 - `--gistsPlain` option to place all files in a single directory rather than in individual directories.
